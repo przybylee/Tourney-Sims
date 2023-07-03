@@ -1,0 +1,132 @@
+---
+title: "Tournament Variance"
+author: "Lee Przybylski"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(reactable)
+```
+
+## Background
+
+We will simulate a tournament of 12 teams in 2 formats.  The first is a double
+elimination format with games that are best of 3 to 11 on the main draw and 1 
+game to 15 in the back draw.  The second is a round robin with 2 pools of 6 
+teams.  In pool play, every team plays the other 5 teams in 1 game to 11.  The 
+top 3 from each pool advance to a 6 team playoff consisting of games to 15.  The
+medal matches are best of 3 to 11.  We assume the seeding is perfect according
+to the probability of each team winning a rally.
+
+## Functions
+
+First we need some utility functions.
+
+```{r}
+#A logistic function to get binomial probability team 1 wins
+logistic <- function(a1 = 0, a2 = 0){
+ p <- 1/(1+ exp(a2 - a1))
+ return(p)
+}
+
+play_rally <- function(r1 = 0, r2 = 0, n = 1){
+ p <- logistic(r1, r2)
+ winner <- ifelse(rbinom(n, 1, p) > 0, 1, 2)
+ return(winner)
+}
+
+play_singles_game <- function(
+  a_serve = c(0, 0),
+  a_return = c(a_serve[1] + 0.01, a_serve[2] + 0.01),
+  f_score = 11, 
+  server = NA
+  ){
+ if(is.na(server)) server <- sample(1:2, size = 1)
+ scores <- c(0,0)
+ a <- matrix(c(a_serve, a_return), nrow = 2, ncol = 2)
+ while(max(scores) < 11 | abs(scores[1] - scores[2]) < 2){
+  #specify rally win probs
+  a1 <- a[1, ifelse(server == 1, 1, 2)]
+  a2 <- a[2, ifelse(server == 2, 1, 2)]
+  #play the rally
+  rally_outcome <- play_rally(a1, a2)
+  #assign the point and server for the next rally
+  if(rally_outcome == server){
+    scores[rally_outcome] <- scores[rally_outcome] + 1
+  }else{
+   server <- rally_outcome
+  }
+  
+ }
+ return(scores)
+}
+
+play_singles_match <- function(
+  a_serve = c(0, 0), 
+  a_return = c(a_serve[1] + 0.01, a_serve[2] + 0.01), 
+  g_max = 3, 
+  f_score = 11){
+ assertthat::assert_that(g_max %% 2 == 1, 
+                         msg = "check g_max; invalid number of games"
+                         )
+ #Choose who serves first
+ server <- sample(1:2, 1)
+ #initialize games and scores
+ games <- c(0,0)
+ scores <- ""
+ while(max(games) < (g_max + 1)/2){
+  game_i <- play_singles_game(a_serve, a_return, f_score, server = server)
+  winner <- which.max(game_i)
+  games[winner] <- games[winner] + 1
+  scores <- paste(scores, paste(game_i[1], game_i[2], sep = "-"), " ", sep = "")
+  server <- ifelse(server == 1, 2, 1)
+ }
+ 
+ winner <- which.max(games)
+ #Drop the last space from scores
+ #scores <-
+ 
+ output <- data.frame(winner = winner, 
+                      scores = scores, 
+                      games1 = games[1], 
+                      games2 = games[2],
+                      a1serve = a_serve[1],
+                      a1return = a_return[1],
+                      a2serve = a_serve[2],
+                      a2return = a_return[2])
+ return(output)
+}
+```
+
+Next, we need functions to play the bracket.  With 12 team double elimination, 
+we give the top 4 seeds a bye.
+
+```{r}
+#field is a df with listing the players and their power ratings
+field <- data.frame(rating = rnorm(12, sd = 0.2)) %>% 
+ as_tibble() %>% 
+ arrange(-rating) %>% 
+ mutate(seed = 1:12, .before = everything())
+
+play_de16_bracket <- function(field){
+ #List the matches
+ rd1_matches <- data.frame(match = rep(1:8, each = 2), 
+                           seed = c(1, 16,
+                                    8, 9,
+                                    5, 12,
+                                    4, 13,
+                                    3, 14,
+                                    6, 11,
+                                    7, 10,
+                                    2, 15
+                                    )
+                           )
+}
+```
