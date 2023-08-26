@@ -1,3 +1,15 @@
+#' Simulate a single rally
+#'
+#' @param r1 Numeric, log odds rating of player1
+#' @param r2 Numeric, log odds rating of player2
+#' @param n Integer indicating the number of rallies to simulate
+#'
+#' @return A vector of integers indicating which player won the simulated 
+#' rallies
+#' @export
+#'
+#' @examples
+#' play_rally(5, 1, 10)
 play_rally <- function(r1 = 0, r2 = 0, n = 1){
   p <- logistic(r1, r2)
   winner <- ifelse(rbinom(n, 1, p) > 0, 1, 2)
