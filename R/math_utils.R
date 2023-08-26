@@ -13,3 +13,5 @@ logistic <- function(a1 = 0, a2 = 0){
   p <- 1/(1+ exp(a2 - a1))
   return(p)
 }
+
+##Comment to test git
