@@ -16,6 +16,21 @@ play_rally <- function(r1 = 0, r2 = 0, n = 1){
   return(winner)
 }
 
+#' Simulate a singles game
+#'
+#' @param a_serve Numeric indicating the logodds rating of each player winning
+#' a rally while serving
+#' @param a_return Numeric indicating the logodds rating of each player winning 
+#' a rally while receiving
+#' @param f_score Integer indicating the number of points required to win the 
+#' game
+#' @param server Integer indicating which player serves first
+#'
+#' @return Numeric, 2-d indicating each player's score
+#' @export
+#'
+#' @examples
+#' #None
 play_singles_game <- function(
     a_serve = c(0, 0),
     a_return = c(a_serve[1] + 0.01, a_serve[2] + 0.01),
