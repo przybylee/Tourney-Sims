@@ -57,6 +57,22 @@ play_singles_game <- function(
   return(scores)
 }
 
+#' Simulate a singles match
+#'
+#'
+#' @param a_serve Numeric indicating the logodds rating of each player winning
+#' a rally while serving
+#' @param a_return Numeric indicating the logodds rating of each player winning 
+#' a rally while receiving
+#' @param g_max Integer indciating the maximum number of games in the match
+#' @param f_score Integer indicating the minimum number of points required to
+#' win a game
+#'
+#' @return A dataframe summarizing the simulated match
+#' @export
+#'
+#' @examples
+#' #none
 play_singles_match <- function(
     a_serve = c(0, 0), 
     a_return = c(a_serve[1] + 0.01, a_serve[2] + 0.01), 
