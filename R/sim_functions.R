@@ -74,13 +74,18 @@ play_singles_game <- function(
 #' @examples
 #' #none
 play_singles_match <- function(
-    a_serve = c(0, 0), 
-    a_return = c(a_serve[1] + 0.01, a_serve[2] + 0.01), 
+    a_serve1 = 0,
+    a_serve2 = 0,
+    a_return1 = a_serve1 + 0.01,
+    a_return2 = a_serve2 + 0.01,
     g_max = 3, 
     f_score = 11){
   assertthat::assert_that(g_max %% 2 == 1, 
                           msg = "check g_max; invalid number of games"
   )
+  #Store the serve and return ratings in vectors
+  a_serve = c(a_serve1, a_serve2)
+  a_return = c(a_return1, a_return2)
   #Choose who serves first
   server <- sample(1:2, 1)
   #initialize games and scores
