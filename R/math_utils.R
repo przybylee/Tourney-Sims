@@ -14,4 +14,3 @@ logistic <- function(a1 = 0, a2 = 0){
   return(p)
 }
 
-##Comment to test git
