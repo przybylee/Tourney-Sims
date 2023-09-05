@@ -38,7 +38,9 @@ single_elim_1x <- R6::R6Class(
                side = 1
                ) %>% 
         as_tibble()
+      
     }
+      #Use purrr::pmap to play all the matches, set output
   )
   
   
