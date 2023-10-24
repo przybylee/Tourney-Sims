@@ -113,3 +113,5 @@ play_singles_match <- function(
                        a2return = a_return[2])
   return(output)
 }
+
+#play_singles_matches
