@@ -1,5 +1,6 @@
 ## code to prepare `sample_matches` dataset goes here
 ?play_singles_match
+library(dplyr)
 
 sample_matches <- data.frame(
   g_max = rep(3, 10),
@@ -16,5 +17,3 @@ sample_matches <- data.frame(
 sample_matches
 
 usethis::use_data(sample_matches, overwrite = TRUE)
-
-?purrr::pmap_dfr

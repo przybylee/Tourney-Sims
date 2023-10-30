@@ -110,7 +110,8 @@ play_singles_match <- function(
                        a1serve = a_serve[1],
                        a1return = a_return[1],
                        a2serve = a_serve[2],
-                       a2return = a_return[2])
+                       a2return = a_return[2]
+                       )
   return(output)
 }
 

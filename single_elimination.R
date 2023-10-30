@@ -1,14 +1,14 @@
-library(dplyr)
-#Example entries
-entries <- data.frame(a_serve = rnorm(16, sd = 0.5)) %>% 
-  as_tibble() %>% 
-  arrange(-a_serve) %>% 
-  mutate(a_return = a_serve + 0.05,
-         seed = 1:16
-         ) %>% 
-  select(seed, everything())
-  
-entries
+# library(dplyr)
+# #Example entries
+# entries <- data.frame(a_serve = rnorm(16, sd = 0.5)) %>% 
+#   as_tibble() %>% 
+#   arrange(-a_serve) %>% 
+#   mutate(a_return = a_serve + 0.05,
+#          seed = 1:16
+#          ) %>% 
+#   select(seed, everything())
+#   
+# entries
 
 single_elim_1x <- R6::R6Class(
   "single_elimination_singles_tournament",

@@ -4,7 +4,7 @@
 #' @param a2 Linear value of team 2
 #'
 #' @return The probability that team 1 wins according to a logistic model
-#' @export)
+#' @export
 #'
 #' @examples
 #' logistic(1, 0)
