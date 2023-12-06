@@ -9,6 +9,6 @@
 #'   \item{serve1}{player1's serve rating}
 #'   \item{serve2}{player2's serve rating}
 #'   \item{return1}{player1's return rating}
-#'   \item{return2}{player2's return rating}
+#'   \item{return2}{player2's return rating} 
 #' }
 "sample_matches"

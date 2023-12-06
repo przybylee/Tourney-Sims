@@ -74,25 +74,25 @@ play_singles_game <- function(
 #' @examples
 #' #none
 play_singles_match <- function(
-    a_serve1 = 0,
-    a_serve2 = 0,
-    a_return1 = a_serve1 + 0.01,
-    a_return2 = a_serve2 + 0.01,
+    serve1 = 0,
+    serve2 = 0,
+    return1 = serve1 + 0.01,
+    return2 = serve2 + 0.01,
     g_max = 3, 
     f_score = 11){
   assertthat::assert_that(g_max %% 2 == 1, 
                           msg = "check g_max; invalid number of games"
   )
   #Store the serve and return ratings in vectors
-  a_serve = c(a_serve1, a_serve2)
-  a_return = c(a_return1, a_return2)
+  serve = c(serve1, serve2)
+  return = c(return1, return2)
   #Choose who serves first
   server <- sample(1:2, 1)
   #initialize games and scores
   games <- c(0,0)
   scores <- ""
   while(max(games) < (g_max + 1)/2){
-    game_i <- play_singles_game(a_serve, a_return, f_score, server = server)
+    game_i <- play_singles_game(serve, return, f_score, server = server)
     winner <- which.max(game_i)
     games[winner] <- games[winner] + 1
     scores <- paste(scores, paste(game_i[1], game_i[2], sep = "-"), " ", sep = "")
@@ -107,12 +107,41 @@ play_singles_match <- function(
                        scores = scores, 
                        games1 = games[1], 
                        games2 = games[2],
-                       a1serve = a_serve[1],
-                       a1return = a_return[1],
-                       a2serve = a_serve[2],
-                       a2return = a_return[2]
+                       a1serve = serve[1],
+                       a1return = return[1],
+                       a2serve = serve[2],
+                       a2return = return[2]
                        )
   return(output)
 }
 
-#play_singles_matches
+#' Simulate a collection of singles matches
+#'
+#' @param matches A dataframe containing fields corresponding to the arguments
+#' of `play_singles_match()` to simulate. 
+#' @param match_id An optional string to identify the column from the matches 
+#' dataframe that provides the match ids
+#' @return A tibble of match results
+#' @export
+#'
+#' @examples
+#' play_many_singles_matches(sample_matches)
+play_many_singles_matches <- function(
+  matches = sample_matches,
+  match_id = NULL
+){
+  sim_params <- c("serve1", "serve2", "return1", "return2", "g_max", "f_score")
+  results <- matches %>% 
+    select(all_of(sim_params)) %>% 
+    purrr::pmap(play_singles_match) %>% 
+    purrr::list_rbind() %>% 
+    as_tibble()
+  
+  if(!is.null(match_id)){
+    results <- matches %>% 
+      select(all_of(match_id)) %>% 
+      bind_cols(results)
+  }
+  
+  return(results)
+}

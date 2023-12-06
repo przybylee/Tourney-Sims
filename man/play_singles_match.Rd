@@ -5,10 +5,10 @@
 \title{Simulate a singles match}
 \usage{
 play_singles_match(
-  a_serve1 = 0,
-  a_serve2 = 0,
-  a_return1 = a_serve1 + 0.01,
-  a_return2 = a_serve2 + 0.01,
+  serve1 = 0,
+  serve2 = 0,
+  return1 = serve1 + 0.01,
+  return2 = serve2 + 0.01,
   g_max = 3,
   f_score = 11
 )

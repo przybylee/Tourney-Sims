@@ -2,6 +2,7 @@
 
 export(build_round)
 export(logistic)
+export(play_many_singles_matches)
 export(play_rally)
 export(play_singles_game)
 export(play_singles_match)
