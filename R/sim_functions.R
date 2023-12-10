@@ -119,8 +119,8 @@ play_singles_match <- function(
 #'
 #' @param matches A dataframe containing fields corresponding to the arguments
 #' of `play_singles_match()` to simulate. 
-#' @param match_id An optional string to identify the column from the matches 
-#' dataframe that provides the match ids
+#' @param extra_cols An optional string vector naming additional columns to 
+#' report in the results
 #' @return A tibble of match results
 #' @export
 #'
@@ -128,7 +128,7 @@ play_singles_match <- function(
 #' play_many_singles_matches(sample_matches)
 play_many_singles_matches <- function(
   matches = sample_matches,
-  match_id = NULL
+  extra_cols = NULL
 ){
   sim_params <- c("serve1", "serve2", "return1", "return2", "g_max", "f_score")
   results <- matches %>% 

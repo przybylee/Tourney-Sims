@@ -45,18 +45,19 @@ round_matches <- data.frame(
 ) %>% 
   mutate(pos1 = match, pos2 = 2*N_matches_round + 1 - match) %>% 
   inner_join(standings %>% 
-               select(pos, serve, return) %>% 
+               select(pos, seed, serve, return) %>% 
                rename_with(~paste0(.x, "1"))
              ) %>% 
   inner_join(standings %>%
-               select(pos, serve, return) %>% 
+               select(pos, seed, serve, return) %>% 
                rename_with(~paste0(.x, "2"))
   ) %>% 
   as_tibble() %>% 
   mutate(g_max = 3, f_score = 11)
 
 #Play matches in round_matches
-play_many_singles_matches(round_matches, match_id = round_matches$match)
+r_results <- play_many_singles_matches(round_matches, match_id = "match")
+
 
 #Update standings
 
