@@ -9,6 +9,58 @@
 #   select(seed, everything())
 #   
 # entries
+library(dplyr)
+library(devtools)
+load_all()
+
+#parameters for the entries and skill levels
+n_entries <- 8
+std_serve <- 0.5
+std_return <- 0.01
+
+serve <- rnorm(n_entries, 0, std_serve)
+return <- serve + rnorm(n_entries, 0.1, std_return)
+
+entries <- data.frame(
+  serve = serve, 
+  return = return
+) %>% 
+  arrange(-(serve + return)) %>% 
+  mutate(seed = 1:n_entries) %>% 
+  select(seed, serve, return) %>% 
+  as_tibble()
+
+entries
+N <- nrow(entries)
+rounds <- ceiling(log2(N))
+
+standings <- entries %>% 
+  mutate(pos = seed, wins = 0, losses = 0)
+round <- 1
+N_matches_round <- 2^(rounds - 1)
+
+round_matches <- data.frame(
+  round = round,
+  match = 1:N_matches_round
+) %>% 
+  mutate(pos1 = match, pos2 = 2*N_matches_round + 1 - match) %>% 
+  inner_join(standings %>% 
+               select(pos, serve, return) %>% 
+               rename_with(~paste0(.x, "1"))
+             ) %>% 
+  inner_join(standings %>%
+               select(pos, serve, return) %>% 
+               rename_with(~paste0(.x, "2"))
+  ) %>% 
+  as_tibble() %>% 
+  mutate(g_max = 3, f_score = 11)
+
+#Play matches in round_matches
+play_many_singles_matches(round_matches, match_id = round_matches$match)
+
+#Update standings
+
+#Set up next round
 
 single_elim_1x <- R6::R6Class(
   "single_elimination_singles_tournament",
