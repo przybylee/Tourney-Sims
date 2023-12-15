@@ -55,12 +55,23 @@ round_matches <- data.frame(
   as_tibble() %>% 
   mutate(g_max = 3, f_score = 11)
 
+id_cols <- c("round", "match", "seed1", "pos1", "seed2", "pos2")
 #Play matches in round_matches
-r_results <- play_many_singles_matches(round_matches, match_id = "match")
-
+r_results <- play_many_singles_matches(round_matches, extra_cols = id_cols) %>% 
+  mutate(pos_winner = ifelse(winner == 1, pos1, pos2),
+         pos_loser = ifelse(winner == 1, pos2, pos1)
+         )
 
 #Update standings
-
+standins <- standings %>% 
+  left_join(select(r_results, pos_winner, match) %>% mutate(win = 1), 
+            by = c("pos" = "pos_winner")
+            ) %>% 
+  left_join(select(r_results, pos_loser) %>% mutate(lose = 1),
+            by = c("pos" = "pos_loser") 
+            ) %>% 
+  tidyr::replace_na(list(win = 0, lose = 0))
+  
 #Set up next round
 
 single_elim_1x <- R6::R6Class(

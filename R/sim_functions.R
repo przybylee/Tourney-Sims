@@ -137,9 +137,9 @@ play_many_singles_matches <- function(
     purrr::list_rbind() %>% 
     as_tibble()
   
-  if(!is.null(match_id)){
+  if(!is.null(extra_cols)){
     results <- matches %>% 
-      select(all_of(match_id)) %>% 
+      select(all_of(extra_cols)) %>% 
       bind_cols(results)
   }
   
