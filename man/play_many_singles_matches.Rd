@@ -4,14 +4,14 @@
 \alias{play_many_singles_matches}
 \title{Simulate a collection of singles matches}
 \usage{
-play_many_singles_matches(matches = sample_matches, match_id = NULL)
+play_many_singles_matches(matches = sample_matches, extra_cols = NULL)
 }
 \arguments{
 \item{matches}{A dataframe containing fields corresponding to the arguments
 of \code{play_singles_match()} to simulate.}
 
-\item{match_id}{An optional string to identify the column from the matches
-dataframe that provides the match ids}
+\item{extra_cols}{An optional string vector naming additional columns to
+report in the results}
 }
 \value{
 A tibble of match results

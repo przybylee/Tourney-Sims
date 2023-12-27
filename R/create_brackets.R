@@ -1,29 +1,44 @@
-# entries <- 16
-# round <- 1
-
-#' Created match rows for a round
+#' Draw a random field of singles players
 #'
-#' @param round Integer indciating the round of the tournament
-#' @param entries Integer indicating the number of entries remaining in the 
-#' tournament
+#' @param n_players Integer, number of players in the field 
+#' @param return_effect Numeric, the log odds advantage for the returner
+#' @param std_player The standard deviation of player effects
+#' @param std_return The standard deviation of player return effects
 #'
-#' @return A dataframe with 4 fieldws
+#' @description This function generates a field of random players for a singles
+#' tournament.  Each player gets a serve rating and a return rating.  We assume 
+#' the serve ratings for each player $j$ are IID  
+#' $s_j = p_j\sim N(0, \sigma_p^2)$. The return ratings are given by
+#' \begin{equation}
+#' r_j = p_j + \rho + e_j
+#' \end{equation}
+#' where $\rho$ is the fixed effect that represents the advantage for the 
+#' returning player and each $e_j\sim N(0, \sigma_r^2)$ are IID with $\simga_r$
+#' as the standard deviation of player return effects.  These ratings are used 
+#' by `play_singles_match()` to simulate any of the tournament matches.
+#' 
+#' @return A tibble with columns `seed`, `serve`, and `return`
 #' @export
 #'
 #' @examples
-#' #none
-build_round <- function(round, entries){
-  matches <- data.frame(round = round, id = 1:(entries/2)) %>% 
-    as_tibble() %>% 
-    mutate(pos1 = id,
-           pos2 = entries + 1 - id
-           )
+#' NONE
+draw_singles_entries <- function(
+    n_players = 8,
+    return_effect = 0.1,
+    std_serve = 0.5,
+    std_return = 0.01
+    ){
+  serve <- rnorm(n_players, 0, std_serve)
+  return <- serve + rnorm(n_players, return_effect, std_return)
   
-  return(matches)
-}
-
-build_bracket <- function(rounds = NULL, entries = 16){
-  if(is.null(rounds)){rounds <- ceiling(log2(entries))}
+  entries <- data.frame(
+    serve = serve, 
+    return = return
+  ) %>% 
+    arrange(-(serve + return)) %>% 
+    mutate(seed = 1:n_players) %>% 
+    select(seed, serve, return) %>% 
+    as_tibble()
   
-  
+  return(entries)
 }

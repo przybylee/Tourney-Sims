@@ -158,22 +158,22 @@ play_round_and_update_standings <- function(
 }
 
   
-###############################
+###############################Build R6 Class for single elimination tournament
 single_elim_1x <- R6::R6Class(
   "single_elimination_singles_tournament",
   
   public = list(
     entries = NULL,
     
-    matches = NULL,
-    
-    results = NULL,
+    match_results = NULL,
     
     standings = NULL,
     
+    rounds = NULL,
+    
     #Use the entries to create standings
     initialize = function(entries){
-      rounds = log2(nrow(entries))
+      self$rounds = log2(nrow(entries))
       
       if(rounds != ceiling(rounds)){
         rounds <- ceiling(rounds)
