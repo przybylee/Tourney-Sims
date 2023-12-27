@@ -39,41 +39,156 @@ standings <- entries %>%
 round <- 1
 N_matches_round <- 2^(rounds - 1)
 
-round_matches <- data.frame(
-  round = round,
-  match = 1:N_matches_round
-) %>% 
-  mutate(pos1 = match, pos2 = 2*N_matches_round + 1 - match) %>% 
-  inner_join(standings %>% 
-               select(pos, seed, serve, return) %>% 
-               rename_with(~paste0(.x, "1"))
-             ) %>% 
-  inner_join(standings %>%
-               select(pos, seed, serve, return) %>% 
-               rename_with(~paste0(.x, "2"))
-  ) %>% 
-  as_tibble() %>% 
-  mutate(g_max = 3, f_score = 11)
-
 id_cols <- c("round", "match", "seed1", "pos1", "seed2", "pos2")
-#Play matches in round_matches
-r_results <- play_many_singles_matches(round_matches, extra_cols = id_cols) %>% 
-  mutate(pos_winner = ifelse(winner == 1, pos1, pos2),
-         pos_loser = ifelse(winner == 1, pos2, pos1)
-         )
+#Function to build next round of matches
+get_next_round_matches <- function(standings, round, N_matches){
+  round_matches <- data.frame(
+    round = round,
+    match = 1:N_matches
+  ) %>% 
+    mutate(pos1 = match, pos2 = 2*N_matches + 1 - match) %>% 
+    inner_join(standings %>% 
+                 select(pos, seed, serve, return) %>% 
+                 rename_with(~paste0(.x, "1"))
+    ) %>% 
+    inner_join(standings %>%
+                 select(pos, seed, serve, return) %>% 
+                 rename_with(~paste0(.x, "2"))
+    ) %>% 
+    as_tibble() %>% 
+    mutate(g_max = 3, f_score = 11)
+  
+  return(round_matches)
+}
 
 #Update standings
-standins <- standings %>% 
-  left_join(select(r_results, pos_winner, match) %>% mutate(win = 1), 
-            by = c("pos" = "pos_winner")
-            ) %>% 
-  left_join(select(r_results, pos_loser) %>% mutate(lose = 1),
-            by = c("pos" = "pos_loser") 
-            ) %>% 
-  tidyr::replace_na(list(win = 0, lose = 0))
+update_standings <- function(standings,  prev_results){
+  output <- standings %>% 
+    left_join(select(prev_results, pos_winner, match) %>% mutate(win = 1), 
+              by = c("pos" = "pos_winner")
+    ) %>% 
+    left_join(select(prev_results, pos_loser) %>% mutate(lose = 1),
+              by = c("pos" = "pos_loser") 
+    ) %>% 
+    tidyr::replace_na(list(win = 0, lose = 0)) %>% 
+    mutate(pos = case_when(win == 1 ~ match,
+                           lose == 1 ~ max(match, na.rm = TRUE) + 1,
+                           TRUE ~ pos
+                           ),
+           wins = wins + win, 
+           losses = losses + lose
+           ) %>%
+    select(-win, -lose, -match) %>% 
+    arrange(pos, seed)
   
-#Set up next round
+  return(output)
+}
 
+#If the number of matches played is greater than 1 when it should be one, award medals
+update_standings_final <- function(standings, prev_results){
+  output <- standings %>%
+    left_join(select(prev_results, pos_winner, match) %>% mutate(win = 1), 
+              by = c("pos" = "pos_winner")
+    ) %>% 
+    left_join(select(prev_results, pos_loser, match) %>% mutate(lose = 1),
+              by = c("pos" = "pos_loser") 
+    ) %>% 
+    tidyr::replace_na(list(win = 0, lose = 0)) %>% 
+    mutate(match = coalesce(match.x, match.y),
+           wins = wins + win, 
+           losses = losses + lose,
+           pos2 = ifelse(pos > 4, pos, order(-wins, losses, match))
+           ) %>% 
+    select(-contains("match"), -win, -lose, -pos2)
+  
+  return(output)
+}
+  
+play_round_and_update_standings <- function(
+    standings, 
+    round = NA_real_, 
+    N_matches_round = ceiling(sum(standings$losses == 0)/2)
+){
+  #Set up the matches based on the standings
+  round_matches <- get_next_round_matches(standings, round, N_matches_round)
+  
+  #If final round, set up the bronze medal match
+  if(N_matches_round == 1){
+    standings <- mutate(standings, pos = ifelse(pos == 3, row_number(), pos))
+    
+    bronze_match <- data.frame(
+      round = round,
+      match = 2
+    ) %>% 
+      mutate(pos1 = 3, pos2 = 4) %>% 
+      inner_join(standings %>% 
+                   select(pos, seed, serve, return) %>% 
+                   rename_with(~paste0(.x, "1"))  
+                    
+      ) %>% 
+      inner_join(standings %>%
+                  select(pos, seed, serve, return) %>% 
+                  rename_with(~paste0(.x, "2")) 
+      ) %>% 
+      as_tibble() %>% 
+      mutate(g_max = 3, f_score = 11)
+    
+    round_matches <- rbind(round_matches, bronze_match)
+  }
+  
+  #Play all the matches in the round
+  r_results <- play_many_singles_matches(round_matches, extra_cols = id_cols) %>% 
+    mutate(pos_winner = ifelse(winner == 1, pos1, pos2),
+           pos_loser = ifelse(winner == 1, pos2, pos1)
+           )
+  
+  #Update the standings
+  if(N_matches_round == 1){
+    standings <- update_standings_final(standings, r_results)
+  }else{
+    standings <- update_standings(standings, r_results)
+    #Update number of matches
+    N_matches_round <- N_matches_round/2
+    #Update round
+    round <- round + 1
+  }
+  
+}
+# round_matches <- data.frame(
+#   round = round,
+#   match = 1:N_matches_round
+# ) %>% 
+#   mutate(pos1 = match, pos2 = 2*N_matches_round + 1 - match) %>% 
+#   inner_join(standings %>% 
+#                select(pos, seed, serve, return) %>% 
+#                rename_with(~paste0(.x, "1"))
+#              ) %>% 
+#   inner_join(standings %>%
+#                select(pos, seed, serve, return) %>% 
+#                rename_with(~paste0(.x, "2"))
+#   ) %>% 
+#   as_tibble() %>% 
+#   mutate(g_max = 3, f_score = 11)
+
+  
+
+#Update the set of matches for the next round
+round_matches <- get_next_round_matches(standings, round, N_matches_round)
+
+
+r_results <-  round_matches %>% 
+  play_many_singles_matches(extra_cols = id_cols) %>% 
+  mutate(pos_winner = ifelse(winner == 1, pos1, pos2),
+         pos_loser = ifelse(winner == 1, pos2, pos1)
+  )
+
+  
+standings <- update_standings(standings, r_results)
+
+
+
+
+###############################
 single_elim_1x <- R6::R6Class(
   "single_elimination_singles_tournament",
   
