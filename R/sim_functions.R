@@ -83,9 +83,32 @@ play_singles_match <- function(
   assertthat::assert_that(g_max %% 2 == 1, 
                           msg = "check g_max; invalid number of games"
   )
+  assertthat::assert_that(!is.na(serve1 + return1) | !is.na(serve2 + return2), 
+                          msg = "Not enough player data to simulate the match"
+  )
   #Store the serve and return ratings in vectors
   serve = c(serve1, serve2)
   return = c(return1, return2)
+  
+  #If only one player is missing, report a forfeit
+  if(is.na(serve1 + return1) | is.na(serve2 + return2)){
+    output <- data.frame(
+      winner = ifelse(is.na(serve1 + return1), 2, 1),
+      scores = ifelse(
+        is.na(serve1 + return1), 
+        paste(rep(paste(0, f_score, sep = "-"), g_max), collapse = " "), 
+        paste(rep(paste(f_score, 0, sep = "-"), g_max), collapse = " ")
+      ),
+      games1 = ifelse(is.na(serve1 + return1), 0, g_max), 
+      games2 = ifelse(is.na(serve1 + return1), g_max, 0),
+      a1serve = serve[1],
+      a1return = return[1],
+      a2serve = serve[2],
+      a2return = return[2]
+    )
+    return(output)
+  }
+  
   #Choose who serves first
   server <- sample(1:2, 1)
   #initialize games and scores
