@@ -154,48 +154,22 @@ play_round_and_update_standings <- function(
   }
   
 }
-# round_matches <- data.frame(
-#   round = round,
-#   match = 1:N_matches_round
-# ) %>% 
-#   mutate(pos1 = match, pos2 = 2*N_matches_round + 1 - match) %>% 
-#   inner_join(standings %>% 
-#                select(pos, seed, serve, return) %>% 
-#                rename_with(~paste0(.x, "1"))
-#              ) %>% 
-#   inner_join(standings %>%
-#                select(pos, seed, serve, return) %>% 
-#                rename_with(~paste0(.x, "2"))
-#   ) %>% 
-#   as_tibble() %>% 
-#   mutate(g_max = 3, f_score = 11)
 
   
-
-#Update the set of matches for the next round
-round_matches <- get_next_round_matches(standings, round, N_matches_round)
-
-
-r_results <-  round_matches %>% 
-  play_many_singles_matches(extra_cols = id_cols) %>% 
-  mutate(pos_winner = ifelse(winner == 1, pos1, pos2),
-         pos_loser = ifelse(winner == 1, pos2, pos1)
-  )
-
-  
-standings <- update_standings(standings, r_results)
-
-
-
-
 ###############################
 single_elim_1x <- R6::R6Class(
   "single_elimination_singles_tournament",
   
   public = list(
     entries = NULL,
+    
     matches = NULL,
+    
     results = NULL,
+    
+    standings = NULL,
+    
+    #Use the entries to create standings
     initialize = function(entries){
       rounds = log2(nrow(entries))
       
