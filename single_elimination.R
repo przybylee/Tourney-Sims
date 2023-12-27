@@ -14,7 +14,7 @@ library(devtools)
 load_all()
 
 #parameters for the entries and skill levels
-n_entries <- 8
+n_entries <- 12
 std_serve <- 0.5
 std_return <- 0.01
 
@@ -34,8 +34,10 @@ entries
 N <- nrow(entries)
 rounds <- ceiling(log2(N))
 
+#Initialize the standings
 standings <- entries %>% 
-  mutate(pos = seed, wins = 0, losses = 0)
+  left_join(data.frame(seed = 1:2^rounds), .) %>% 
+  mutate(pos = seed, wins = 0, losses = 0)  
 round <- 1
 N_matches_round <- 2^(rounds - 1)
 
