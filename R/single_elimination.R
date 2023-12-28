@@ -10,8 +10,8 @@ single_elim_1x <- R6::R6Class(
   "single_elimination_singles_tournament",
   
   public = list(
-    #' @field field The players in the tournament
-    field = NULL,
+    #' @field entries The players in the tournament
+    entries = NULL,
     
     #' @field match_results Tibble describing the results from all matches played
     match_results = NULL,
@@ -50,15 +50,16 @@ single_elim_1x <- R6::R6Class(
       
       #Maybe add a distortion for the seeding here?
       
-      self$field <- data.frame(entries) %>% as_tibble()
-      # self$rounds <- ceiling(log2(nrow(self$entries)))
-      # self$round <- 1
-      # self$N_matches_round <- 2^(self$rounds - 1)
-      # 
-      # #Initialize standings
-      # self$standings <-  self$entries %>% 
-      #   left_join(data.frame(seed = 1:2^self$rounds), .) %>% 
-      #   mutate(pos = seed, wins = 0, losses = 0) 
+      self$entries <- data.frame(entries) %>% as_tibble()
+      self$rounds <- ceiling(log2(nrow(self$entries)))
+      self$round <- 1
+      self$N_matches_round <- 2^(self$rounds - 1)
+       
+      #Initialize standings
+      self$standings <-  self$entries %>% 
+        left_join(data.frame(seed = 1:2^self$rounds), .) %>% 
+        mutate(pos = seed, wins = 0, losses = 0) %>% 
+        as_tibble()
       
     }
     
