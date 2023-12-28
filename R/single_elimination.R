@@ -61,7 +61,7 @@ single_elim_1x <- R6::R6Class(
       #   mutate(pos = seed, wins = 0, losses = 0) 
       
     }
-      
+    
   )
   
   
