@@ -110,7 +110,7 @@ we give the top 4 seeds a bye.
 
 ```{r}
 #field is a df with listing the players and their power ratings
-field <- data.frame(rating = rnorm(12, sd = 0.2)) %>% 
+field <- data.frame(rating = stats::rnorm(12, sd = 0.2)) %>% 
  as_tibble() %>% 
  arrange(-rating) %>% 
  mutate(seed = 1:12, .before = everything())

@@ -32,8 +32,8 @@ draw_singles_entries <- function(
     std_serve = 0.5,
     std_return = 0.01
     ){
-  serve <- rnorm(n_players, 0, std_serve)
-  return <- serve + rnorm(n_players, return_effect, std_return)
+  serve <- stats::rnorm(n_players, 0, std_serve)
+  return <- serve + stats::rnorm(n_players, return_effect, std_return)
   
   entries <- data.frame(
     serve = serve, 
