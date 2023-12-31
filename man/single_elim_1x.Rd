@@ -8,18 +8,10 @@ Single elimination tournament simulator
 
 Single elimination tournament simulator
 }
-\examples{
-
-## ------------------------------------------------
-## Method `single_elim_1x$new`
-## ------------------------------------------------
-
-#NONE
-}
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{field}}{The players in the tournament}
+\item{\code{entries}}{The players in the tournament}
 
 \item{\code{match_results}}{Tibble describing the results from all matches played}
 
@@ -39,6 +31,10 @@ Single elimination tournament simulator
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-single_elimination_singles_tournament-new}{\code{single_elim_1x$new()}}
+\item \href{#method-single_elimination_singles_tournament-get_next_round_matches}{\code{single_elim_1x$get_next_round_matches()}}
+\item \href{#method-single_elimination_singles_tournament-update_standings}{\code{single_elim_1x$update_standings()}}
+\item \href{#method-single_elimination_singles_tournament-update_standings_final}{\code{single_elim_1x$update_standings_final()}}
+\item \href{#method-single_elimination_singles_tournament-play_round_and_update_standings}{\code{single_elim_1x$play_round_and_update_standings()}}
 \item \href{#method-single_elimination_singles_tournament-clone}{\code{single_elim_1x$clone()}}
 }
 }
@@ -48,7 +44,7 @@ Single elimination tournament simulator
 \subsection{Method \code{new()}}{
 Create a new instance of the single elimination singles R6 class
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{single_elim_1x$new(entries)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{single_elim_1x$new(entries = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -61,12 +57,59 @@ Create a new instance of the single elimination singles R6 class
 \subsection{Returns}{
 A new instance of the single elimination singles R6 class
 }
-\subsection{Examples}{
-\if{html}{\out{<div class="r example copy">}}
-\preformatted{#NONE
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-single_elimination_singles_tournament-get_next_round_matches"></a>}}
+\if{latex}{\out{\hypertarget{method-single_elimination_singles_tournament-get_next_round_matches}{}}}
+\subsection{Method \code{get_next_round_matches()}}{
+Create a tibble with the next round of matches to be played based on
+the current round and standings
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{single_elim_1x$get_next_round_matches()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-single_elimination_singles_tournament-update_standings"></a>}}
+\if{latex}{\out{\hypertarget{method-single_elimination_singles_tournament-update_standings}{}}}
+\subsection{Method \code{update_standings()}}{
+Update the tournament standings based on match results from the last round
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{single_elim_1x$update_standings(prev_results)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{prev_results}}{Tibble with the results from the last round of matches}
 }
 \if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-single_elimination_singles_tournament-update_standings_final"></a>}}
+\if{latex}{\out{\hypertarget{method-single_elimination_singles_tournament-update_standings_final}{}}}
+\subsection{Method \code{update_standings_final()}}{
+Update standings after the final round is played
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{single_elim_1x$update_standings_final(prev_results)}\if{html}{\out{</div>}}
+}
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{prev_results}}{Tibble with the results from the last round of matches}
+}
+\if{html}{\out{</div>}}
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-single_elimination_singles_tournament-play_round_and_update_standings"></a>}}
+\if{latex}{\out{\hypertarget{method-single_elimination_singles_tournament-play_round_and_update_standings}{}}}
+\subsection{Method \code{play_round_and_update_standings()}}{
+Play round and update the standings
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{single_elim_1x$play_round_and_update_standings()}\if{html}{\out{</div>}}
 }
 
 }
