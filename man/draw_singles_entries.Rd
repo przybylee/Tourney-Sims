@@ -7,7 +7,7 @@
 draw_singles_entries(
   n_players = 8,
   return_effect = 0.1,
-  std_serve = 0.5,
+  std_player = 0.5,
   std_return = 0.01
 )
 }
@@ -16,9 +16,9 @@ draw_singles_entries(
 
 \item{return_effect}{Numeric, the log odds advantage for the returner}
 
-\item{std_return}{The standard deviation of player return effects}
-
 \item{std_player}{The standard deviation of player effects}
+
+\item{std_return}{The standard deviation of player return effects}
 }
 \value{
 A tibble with columns \code{seed}, \code{serve}, and \code{return}

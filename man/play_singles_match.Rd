@@ -14,16 +14,16 @@ play_singles_match(
 )
 }
 \arguments{
+\item{serve1, serve2}{Numeric indicating the logodds rating of each player
+winning a rally while serving}
+
+\item{return1, return2}{Numeric indicating the logodds rating of each player winning
+a rally while receiving}
+
 \item{g_max}{Integer indciating the maximum number of games in the match}
 
 \item{f_score}{Integer indicating the minimum number of points required to
 win a game}
-
-\item{a_serve}{Numeric indicating the logodds rating of each player winning
-a rally while serving}
-
-\item{a_return}{Numeric indicating the logodds rating of each player winning
-a rally while receiving}
 }
 \value{
 A dataframe summarizing the simulated match
