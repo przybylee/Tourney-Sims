@@ -25,7 +25,7 @@
 #' @export
 #'
 #' @examples
-#' NONE
+#' #NONE
 draw_singles_entries <- function(
     n_players = 8,
     return_effect = 0.1,

@@ -41,5 +41,5 @@ matches.  Players are seeded based on the sum of their serve and return
 ratings.
 }
 \examples{
-NONE
+#NONE
 }
