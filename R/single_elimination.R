@@ -73,11 +73,13 @@ single_elim_1x <- R6::R6Class(
         mutate(pos1 = match, pos2 = 2*self$N_matches_round + 1 - match) %>% 
         inner_join(self$standings %>% 
                      select(pos, seed, serve, return) %>% 
-                     rename_with(~paste0(.x, "1"))
+                     rename_with(~paste0(.x, "1")),
+                   by = "pos1"
         ) %>% 
         inner_join(self$standings %>%
                      select(pos, seed, serve, return) %>% 
-                     rename_with(~paste0(.x, "2"))
+                     rename_with(~paste0(.x, "2")),
+                   by = "pos2"
         ) %>% 
         as_tibble() %>% 
         mutate(g_max = 3, f_score = 11)
@@ -128,9 +130,10 @@ single_elim_1x <- R6::R6Class(
         mutate(match = coalesce(match.x, match.y),
                wins = wins + win, 
                losses = losses + lose,
-               pos2 = ifelse(pos > 4, pos, order(-wins, losses, match))
+               pos2 = ifelse(pos < 4, pos, order(-wins, losses, match))
         ) %>% 
-        select(-contains("match"), -win, -lose, -pos2)
+        select(-contains("match"), -win, -lose, -pos2) %>% 
+        arrange(-wins)
       
       return(invisible())
     },
@@ -138,13 +141,22 @@ single_elim_1x <- R6::R6Class(
     #' @description Play round and update the standings
     #'
     play_round_and_update_standings = function(){
+      #Add break if the tournament is over
+      if(self$round > self$rounds){
+        futile.logger::flog.info("Tournament is over")
+        return(invisible())
+      }
+      
+      futile.logger::flog.info(
+        glue::glue("Playing round {self$round} of {self$rounds}")
+      )
       
       round_matches <- self$get_next_round_matches()
       #If this is the last round, add a bronze medal match
-      if(N_matches_round == 1){
-        bronze_match <- standings %>% 
+      if(self$N_matches_round == 1){
+        bronze_match <- self$standings %>% 
           filter(pos == 3) %>% 
-          inner_join(standings, 
+          inner_join(self$standings, 
                      by = "pos", 
                      suffix = c("1", "2"), 
                      relationship = "many-to-many"
@@ -167,7 +179,7 @@ single_elim_1x <- R6::R6Class(
         )
       
       #If this is not the last round update the standings as normal
-      if(N_matches_round > 1){
+      if(self$N_matches_round > 1){
         self$update_standings(round_results)
       } else {
         self$update_standings_final(round_results)
