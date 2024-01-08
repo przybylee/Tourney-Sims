@@ -130,9 +130,9 @@ single_elim_1x <- R6::R6Class(
         mutate(match = coalesce(match.x, match.y),
                wins = wins + win, 
                losses = losses + lose,
-               pos2 = ifelse(pos < 4, pos, order(-wins, losses, match))
+               pos = ifelse(pos > 4, pos, order(-wins, losses, match))
         ) %>% 
-        select(-contains("match"), -win, -lose, -pos2) %>% 
+        select(-contains("match"), -win, -lose) %>% 
         arrange(-wins)
       
       return(invisible())
@@ -195,7 +195,9 @@ single_elim_1x <- R6::R6Class(
       return(invisible())
     },
     
-    play_tournament_report_results <- function(){
+    #' @description Play the tournament and return the results
+    #' 
+    play_tournament_report_results = function(){
       #Play the tournament
       while(self$round <= self$rounds){
         self$play_round_and_update_standings()
