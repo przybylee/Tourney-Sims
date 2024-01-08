@@ -193,7 +193,21 @@ single_elim_1x <- R6::R6Class(
       self$N_matches_round <- self$N_matches_round/2
       
       return(invisible())
-    }
+    },
+    
+    play_tournament_report_results <- function(){
+      #Play the tournament
+      while(self$round <= self$rounds){
+        self$play_round_and_update_standings()
+      }
+      
+      #Return standings in a single row dataframe
+      output <- self$standings %>% 
+        tidyr::drop_na()
+      
+      return(output)
+         
+      }
     
   )
   
